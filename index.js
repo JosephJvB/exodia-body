@@ -17,30 +17,24 @@ server.get('/ping', (req, res) => {
 })
 server.use('/oauth', (req, res) => {
     console.log('oauth?')
-    console.log('body', JSON.stringify(req.body))
-    res.sendStatus(200)
+    res.sendStatus(400)
     return
 })
 // /webhook?hub.challenge=nk62QPa2y7Tz63fecSP69Sca1l4vtWI_v7fl8o88&hub.lease_seconds=864000&hub.mode=subscribe&hub.topic=https%3A%2F%2Fapi.twitch.tv%2Fhelix%2Fstreams%3Fuser_id%3D61614939
 server.get('/webhook', (req, res) => {
-    console.log('Stream event received:',)
-    console.log('body', JSON.stringify(req.body))
     if(req.query['hub.challenge']) {
         res.send(req.query['hub.challenge'])
-        console.log('challenge sent')
+        console.log('hub.challenge sent')
         return
     }
     res.sendStatus(400)
 })
 server.post('/webhook', (req, res) => {
-    console.log('Stream event received:',)
     console.log('body', JSON.stringify(req.body))
-
     if(!req.body.data) {
         res.sendStatus(400)
         return
     }
-
     console.log('Stream event types:', req.body.data.map(d => d.type))
     if(req.body.data.length == 0) { // stream offline
         if(interval) clearInterval(interval)
@@ -57,7 +51,6 @@ server.post('/webhook', (req, res) => {
         res.sendStatus(200)
         return
     }
-
     res.sendStatus(400)
     return
 })
