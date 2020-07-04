@@ -5,6 +5,7 @@ class TwitchService {
     twitchClient = null
     interval = null
     currentMsg = null
+    connected = false
 
     constructor() {
         const opts = {
@@ -32,14 +33,15 @@ class TwitchService {
         return 400
     }
 
-    onStart() {
+    async onStart() {
         if(this.interval) return
         console.log('=== Stream Online ===')
-        this.twitchClient.connect()
+        await this.twitchClient.connect()
         this.interval = setInterval(async () => {
             await messageClients.Aws.sendMessage()
             console.log('Interval: message sent')
         }, 1000 * 60)
+        this.connected = true
     }
     
     onEnd() {
@@ -49,14 +51,15 @@ class TwitchService {
         this.interval = null
     }
 
-    onCallback(data) {
+    async onCallback(data) {
         if(!data.song || !data.artists) return 400
         const msg = 'Currently playing: '
         + data.song
         + ' by '
         + data.artists
         if(msg == this.currentMsg) return
-        this.twitchClient.say('ayoitsjoevanbo', msg)
+        if(!this.connected) await this.twitchClient.connect()
+        await this.twitchClient.say('ayoitsjoevanbo', msg)
         this.currentMsg = msg
 
         return 200
