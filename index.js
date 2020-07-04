@@ -30,24 +30,27 @@ server.get('/webhook', (req, res) => {
     res.sendStatus(400)
 })
 server.post('/webhook', (req, res) => {
-    console.log('body', JSON.stringify(req.body))
+    console.log(JSON.stringify(req.body))
     if(!req.body.data) {
         res.sendStatus(400)
         return
     }
     console.log('Stream event types:', req.body.data.map(d => d.type))
     if(req.body.data.length == 0) { // stream offline
+        console.log('=== Stream Offline ===')
         if(interval) clearInterval(interval)
         interval = null
         res.sendStatus(200)
         return
     }
     if(req.body.data[0].type == 'live') {
-        if(interval) clearInterval(interval)
-        interval = setInterval(() => {
-            // await clients.Aws.sendMessage()
-            console.log('Interval: message sent')
-        }, 1000 * 60)
+        if(!interval) {
+            console.log('=== Stream Online ===')
+            interval = setInterval(() => {
+                // await clients.Aws.sendMessage()
+                console.log('Interval: message sent')
+            }, 1000 * 60)
+        }
         res.sendStatus(200)
         return
     }

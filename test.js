@@ -11,6 +11,7 @@ const urls = {
 
 
 if(require.main === module) {
+    return
     (async () => {
         try {
             console.log('Subscribe script: invoked')

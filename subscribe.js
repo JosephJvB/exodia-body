@@ -7,6 +7,7 @@ const urls = {
     subscribe: 'https://api.twitch.tv/helix/webhooks/hub',
     streamTopic: 'https://api.twitch.tv/helix/streams',
 }
+const subscriptionLengthSec = 864000 // 10days
 
 
 if(require.main === module) {
@@ -39,7 +40,7 @@ function subscribe (token) {
             'hub.callback': urls.base + '/webhook',
             'hub.mode': 'subscribe',
             'hub.topic': urls.streamTopic + '?user_id='+process.env.User_Id,
-            'hub.lease_seconds': 864000,
+            'hub.lease_seconds': subscriptionLengthSec,
             // 'hub.secret': null,
         }
     })
