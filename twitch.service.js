@@ -36,7 +36,7 @@ class TwitchService {
     async onStart() {
         if(this.interval) return
         console.log('=== Stream Online ===')
-        await this.twitchClient.connect()
+        this.twitchClient.connect()
         this.interval = setInterval(async () => {
             await messageClients.Aws.sendMessage()
             console.log('Interval: message sent')

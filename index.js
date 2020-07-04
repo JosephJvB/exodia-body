@@ -37,10 +37,10 @@ server.post('/webhook', (req, res) => {
         res.sendStatus(500)
     }
 })
-server.post('/callback', (req, res) => {
+server.post('/callback', async (req, res) => {
     try {
         console.log(JSON.stringify(req.body))
-        const code = twitchService.onCallback(req.body)
+        const code = await twitchService.onCallback(req.body)
         res.sendStatus(code)
     } catch (e) {
         console.error(e)
