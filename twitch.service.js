@@ -57,7 +57,7 @@ class TwitchService {
         + data.song
         + ' by '
         + data.artists
-        if(msg == this.currentMsg) return
+        if(msg == this.currentMsg) return 200
         if(!this.connected) await this.twitchClient.connect()
         await this.twitchClient.say('ayoitsjoevanbo', msg)
         this.currentMsg = msg
