@@ -1,6 +1,13 @@
 require('dotenv').config()
 const axios = require('axios')
 
+const urls = {
+    base: 'https://jvb-exodia-server.herokuapp.com',
+    token: 'https://id.twitch.tv/oauth2/token',
+    subscribe: 'https://api.twitch.tv/helix/webhooks/hub',
+    streamTopic: 'https://api.twitch.tv/helix/streams',
+}
+
 
 if(require.main === module) {
     (async () => {
@@ -23,15 +30,15 @@ if(require.main === module) {
 function subscribe (token) {
     return axios({
         method: 'post',
-        url: 'https://api.twitch.tv/helix/webhooks/hub',
+        url: urls.subscribe,
         headers: {
             Authorization: 'Bearer ' + token,
             'Client-Id': process.env.Client_Id,
         },
         data: {
-            'hub.callback': process.env.Base_Url + '/webhook',
+            'hub.callback': urls.base + '/webhook',
             'hub.mode': 'subscribe',
-            'hub.topic': 'https://api.twitch.tv/helix/streams?user_id='+process.env.User_Id,
+            'hub.topic': urls.streamTopic + '?user_id='+process.env.User_Id,
             'hub.lease_seconds': 864000,
             // 'hub.secret': null,
         }
@@ -49,7 +56,7 @@ function subscribe (token) {
 function getToken () {
     return axios({
         method: 'post',
-        url: 'https://id.twitch.tv/oauth2/token',
+        url: urls.token,
         params: {
             client_id: process.env.Client_Id,
             client_secret: process.env.Client_Secret,

@@ -22,30 +22,32 @@ server.use('/oauth', (req, res) => {
     return
 })
 // /webhook?hub.challenge=nk62QPa2y7Tz63fecSP69Sca1l4vtWI_v7fl8o88&hub.lease_seconds=864000&hub.mode=subscribe&hub.topic=https%3A%2F%2Fapi.twitch.tv%2Fhelix%2Fstreams%3Fuser_id%3D61614939
-server.use('/webhook', (req, res) => {
+server.get('/webhook', (req, res) => {
     console.log('Stream event received:',)
     console.log('body', JSON.stringify(req.body))
     if(req.query['hub.challenge']) {
-        console.log('challenge received')
         res.send(req.query['hub.challenge'])
+        console.log('challenge sent')
         return
     }
+    res.sendStatus(400)
+})
+server.post('/webhook', (req, res) => {
+    console.log('Stream event received:',)
+    console.log('body', JSON.stringify(req.body))
 
     if(!req.body.data) {
-        res.sendStatus(200)
-        return
-    }
-
-    if(req.body.data.length == 0) { // stream offline
-        if(interval) clearInterval(interval)
-        interval = null
-        // save to db?
-        res.sendStatus(200)
+        res.sendStatus(400)
         return
     }
 
     console.log('Stream event types:', req.body.data.map(d => d.type))
-
+    if(req.body.data.length == 0) { // stream offline
+        if(interval) clearInterval(interval)
+        interval = null
+        res.sendStatus(200)
+        return
+    }
     if(req.body.data[0].type == 'live') {
         if(interval) clearInterval(interval)
         interval = setInterval(() => {
@@ -56,7 +58,7 @@ server.use('/webhook', (req, res) => {
         return
     }
 
-    res.sendStatus(200)
+    res.sendStatus(400)
     return
 })
 /*{
