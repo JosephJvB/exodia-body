@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk')
 
 class Aws {
+    client = null
+
     constructor() {
         this.client = new AWS.SNS({ region: process.env.AWS_REGION })
     }
