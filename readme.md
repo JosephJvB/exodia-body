@@ -1,0 +1,1 @@
+ok now auto deploys are enabled
