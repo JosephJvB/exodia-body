@@ -1,5 +1,5 @@
 const tmi = require('tmi.js')
-const messageClients = require('./messge-clients')
+const MessageClient = require('./messge-client')
 
 class TwitchService {
     twitchClient = null
@@ -16,6 +16,7 @@ class TwitchService {
             channels: ['ayoitsjoevanbo']
         }
         this.twitchClient = new tmi.client(opts)
+        this.messageClient = new MessageClient()
     }
 
     handleWebhook(data) {
@@ -36,17 +37,16 @@ class TwitchService {
     async onStart() {
         if(this.interval) return
         console.log('=== Stream Online ===')
-        this.twitchClient.connect()
         this.interval = setInterval(async () => {
-            await messageClients.Aws.sendMessage()
+            await messageClients.startChain()
             console.log('Interval: message sent')
         }, 1000 * 60)
-        this.connected = true
     }
-    
+
     onEnd() {
         console.log('=== Stream Offline ===')
         this.twitchClient.disconnect()
+        this.connected = false
         if(this.interval) clearInterval(this.interval)
         this.interval = null
     }
@@ -59,6 +59,7 @@ class TwitchService {
         + data.artists
         if(msg == this.currentMsg) return 200
         if(!this.connected) await this.twitchClient.connect()
+        this.connected = true
         await this.twitchClient.say('ayoitsjoevanbo', msg)
         this.currentMsg = msg
 
