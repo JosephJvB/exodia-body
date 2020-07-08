@@ -21,12 +21,12 @@ class TwitchService {
 
     handleWebhook(data) {
         if(!data) return 400
-        console.log('Stream event types:', req.body.data.map(d => d.type))
+        console.log('Stream event types:', data.map(d => d.type))
         if(data.length == 0) { // stream offline
             this.onEnd()
             return 200
         }
-        if(req.body.data[0].type == 'live') {
+        if(data[0].type == 'live') {
             this.onStart()
             return 200
         }
