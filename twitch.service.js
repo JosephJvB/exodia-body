@@ -45,7 +45,7 @@ class TwitchService {
             console.error('twitchservice.onStart: starting messaging interval')
             this.interval = setInterval(async () => {
                 try {
-                    await messageClients.startChain()
+                    await messageClient.startChain()
                     console.log('Interval: message sent')
                 } catch (e) {
                     console.error('twitchService.interval: failed to send message')
