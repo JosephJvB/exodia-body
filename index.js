@@ -30,7 +30,7 @@ server.get('/webhook', (req, res) => {
 server.post('/webhook', (req, res) => {
     try {
         console.log(JSON.stringify(req.body))
-        const code = twitchService.handleWebhook(req.body.data)
+        const code = await twitchService.handleWebhook(req.body.data)
         res.sendStatus(code)
     } catch (e) {
         console.error(e)
