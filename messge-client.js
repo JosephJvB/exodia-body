@@ -6,7 +6,11 @@ class MessageClient {
     azureClient = null
     
     constructor() {
-        this.awsClient = new AWS.SNS({ region: process.env.AWS_REGION })
+        this.awsClient = new AWS.SNS({
+            region: process.env.AWS_REGION,
+            accessKeyId: process.env.AWS_KEY_ID,
+            secretAccessKey: process.env.AWS_KEY_SECRET,
+        })
         this.googleClient = null
         this.azureClient = null
     }
