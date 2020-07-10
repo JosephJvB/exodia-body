@@ -19,51 +19,72 @@ class TwitchService {
         this.messageClient = new MessageClient()
     }
 
-    handleWebhook(data) {
-        if(!data) return 400
-        console.log('Stream event types:', data.map(d => d.type))
-        if(data.length == 0) { // stream offline
-            this.onEnd()
-            return 200
+    async handleWebhook(data) {
+        try {
+            if(!data) return 400
+            console.log('Stream event types:', data.map(d => d.type))
+            if(data.length == 0) { // stream offline
+                await this.onEnd()
+                return 200
+            }
+            if(data[0].type == 'live') {
+                await this.onStart()
+                return 200
+            }
+            return 400
+        } catch (e) {
+            console.error('twitchservice.handleWebhook: error')
+            console.error(e)
+            return 500
         }
-        if(data[0].type == 'live') {
-            this.onStart()
-            return 200
-        }
-
-        return 400
     }
 
     async onStart() {
-        if(this.interval) return
-        console.log('=== Stream Online ===')
-        this.interval = setInterval(async () => {
-            await messageClients.startChain()
-            console.log('Interval: message sent')
-        }, 1000 * 60)
+        try {
+            if(this.interval) return
+            console.error('twitchservice.onStart: starting messaging interval')
+            this.interval = setInterval(async () => {
+                await messageClients.startChain()
+                console.log('Interval: message sent')
+            }, 1000 * 60)
+        } catch (e) {
+            console.error('twitchservice.onStart: error')
+            console.error(e)
+        }
     }
 
-    onEnd() {
-        console.log('=== Stream Offline ===')
-        this.twitchClient.disconnect()
-        this.connected = false
-        if(this.interval) clearInterval(this.interval)
-        this.interval = null
+    async onEnd() {
+        try {
+            console.log('twitchservice.onEnd: closing server')
+            await this.twitchClient.disconnect()
+            this.connected = false
+            if(this.interval) clearInterval(this.interval)
+            this.interval = null
+        } catch (e) {
+            console.error('twitchservice.onEnd: error')
+            console.error(e)
+        }
     }
 
     async onCallback(data) {
-        if(!data.song || !data.artists) return 400
-        const msg = 'Currently playing: '
-        + data.song
-        + ' by '
-        + data.artists
-        if(msg == this.currentMsg) return 200
-        if(!this.connected) await this.twitchClient.connect()
-        this.connected = true
-        await this.twitchClient.say('ayoitsjoevanbo', msg)
-        this.currentMsg = msg
-
-        return 200
+        try {
+            console.log('twitchservice.onCallback: invoked')
+            if(!data.song || !data.artists) return 400
+            const msg = 'Currently playing: '
+            + data.song
+            + ' by '
+            + data.artists
+            if(msg == this.currentMsg) return 200
+            if(!this.connected) await this.twitchClient.connect()
+            this.connected = true
+            await this.twitchClient.say('ayoitsjoevanbo', msg)
+            this.currentMsg = msg
+            return 200
+        } catch (e) {
+            console.error('twitchservice.onCallback: error')
+            console.error(e)
+            return 500
+        }
     }
 }
 

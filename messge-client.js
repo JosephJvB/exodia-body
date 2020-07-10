@@ -14,6 +14,7 @@ class MessageClient {
     startChain() {
         let chain = ['aws', /*'google', 'azure'*/]
         chain.sort(() => Math.random() - 0.5)
+        console.log('chain set:', chain)
         return this[chain[0]](chain.slice(1))
     }
 
