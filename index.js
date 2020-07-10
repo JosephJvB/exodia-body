@@ -27,7 +27,7 @@ server.get('/webhook', (req, res) => {
     }
     res.sendStatus(400)
 })
-server.post('/webhook', (req, res) => {
+server.post('/webhook', async (req, res) => {
     try {
         console.log(JSON.stringify(req.body))
         const code = await twitchService.handleWebhook(req.body.data)
