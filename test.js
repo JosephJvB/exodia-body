@@ -13,6 +13,7 @@ axios({
     method: 'post',
     url: 'https://jvb-exodia-server.herokuapp.com/webhook',
     data: {
-        data: [{type: 'live'}]
+        // data: [{type: 'live'}]
+        data: []
     }
 })

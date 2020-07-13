@@ -1,5 +1,5 @@
 const tmi = require('tmi.js')
-const MessageClient = require('./messge-client')
+const MessageClient = require('./OLD.messge-client')
 
 class TwitchService {
     twitchClient = null

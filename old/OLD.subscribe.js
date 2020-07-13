@@ -11,21 +11,21 @@ const subscriptionLengthSec = 864000 // 10days
 
 
 if(require.main === module) {
-    (async () => {
-        try {
-            console.log('Subscribe script: invoked')
-            const r1 = await getToken()
-            const r2 = await subscribe(r1.data.access_token)
-            console.log('Subscribe success:', r2.status)
-        } catch (e) {
-            console.error('Subscribe Failed')
-            if(e.isAxiosError) {
-                console.error(e.response.statusCode)
-                console.error(e.response.data)
-            }
-            else console.error(e)
-        }
-    })()
+    // (async () => {
+    //     try {
+    //         console.log('Subscribe script: invoked')
+    //         const r1 = await getToken()
+    //         const r2 = await subscribe(r1.data.access_token)
+    //         console.log('Subscribe success:', r2.status)
+    //     } catch (e) {
+    //         console.error('Subscribe Failed')
+    //         if(e.isAxiosError) {
+    //             console.error(e.response.statusCode)
+    //             console.error(e.response.data)
+    //         }
+    //         else console.error(e)
+    //     }
+    // })()
 }
 
 function subscribe (token) {
