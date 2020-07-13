@@ -28,15 +28,25 @@ server.get('/ping', (req, res) => {
 })
 
 let currentTrack = null
+let currentChat = []
 server.listen(process.env.PORT, async () => {
     console.log('up on port', Number(process.env.PORT))
     let [date, time] = new Date(Date.now()).toLocaleString().split(', ')
     date = date.replace(/\//gi, '-')
     const file = path.join(__dirname, 'logs', date + '.json')
     if(!fs.existsSync(file)) fs.writeFileSync(file, JSON.stringify({
-        [time]: []
+        [time]: {chat: [], tracks: []}
     }))
+    else {
+        const exist = require(file)
+        exist[time] = {chat: [], tracks: []}
+        fs.writeFileSync(file, JSON.stringify(exist, null, 2))
+    }
     await twitch.connect()
+    twitch.on('message', (channel, tags, message, self) => {
+        if(self) return
+        currentChat.push({from: tags.username, text: message, ts: Date.now()})
+    })
     setInterval(async () => {
         const track = await spotify.getCurrentPlaying()
         if(!track) return console.log('..none playing..')
@@ -44,8 +54,9 @@ server.listen(process.env.PORT, async () => {
         await twitch.say('ayoitsjoevanbo', 'Currently playing: '+track)
         currentTrack = track
         const j = require(file)
-        if(!j[time]) j[time] = []
-        j[time].push(currentTrack)
+        j[time].tracks.push(currentTrack)
+        j[time].chat = [...j[time].chat, ...currentChat]
+        currentChat = []
         fs.writeFileSync(file, JSON.stringify(j, null, 2))
     }, 90 * 1000)
 })
